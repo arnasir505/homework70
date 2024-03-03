@@ -95,7 +95,7 @@ const ContactEditor: React.FC = () => {
               <p>Photo preview:</p>
               <div className='photo-wrap border-1 border-black'>
                 <img
-                  src='https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg'
+                  src='https://fakeimg.pl/120x120?font=bebas'
                   alt='preview'
                   className='photo'
                 />

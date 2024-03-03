@@ -8,3 +8,7 @@ export interface ApiContact {
 export interface Contact extends ApiContact {
   id: string;
 }
+
+export interface ApiContacts {
+  [id: string]: ApiContact
+}
