@@ -1,0 +1,9 @@
+.photo-wrap {
+  width: 120px;
+  height: 120px;
+}
+
+.photo {
+  width: 100%;
+  height: auto;
+}
