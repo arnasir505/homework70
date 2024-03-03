@@ -1,14 +1,32 @@
 import React from 'react';
 import './ContactEditor.css';
 import { Link } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import {
+  clearForm,
+  selectContact,
+  selectLoading,
+  updateContact,
+} from '../../store/contactSlice/contactSlice';
+import { addContact } from '../../store/contactSlice/contactThunks';
 
 const ContactEditor: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const contact = useAppSelector(selectContact);
+  const isLoading = useAppSelector(selectLoading);
+
+  const onFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await dispatch(addContact(contact));
+    dispatch(clearForm());
+  };
+
   return (
     <div className='container'>
       <div className='row'>
         <div className='col-lg-6'>
           <h1 className='my-3'>Add new contact</h1>
-          <form>
+          <form onSubmit={onFormSubmit}>
             <div className='mb-3'>
               <label htmlFor='name' className='form-label'>
                 Name:
@@ -20,6 +38,9 @@ const ContactEditor: React.FC = () => {
                 name='name'
                 placeholder='John Doe'
                 required
+                autoComplete='on'
+                value={contact.name}
+                onChange={(e) => dispatch(updateContact(e))}
               />
             </div>
             <div className='mb-3'>
@@ -31,9 +52,12 @@ const ContactEditor: React.FC = () => {
                 className='form-control'
                 id='phone'
                 name='phone'
-                placeholder='996-555-555-555'
-                pattern='[0-9]{3} [0-9]{3} [0-9]{3} [0-9]{3}'
+                placeholder='996555555555'
+                pattern='[0-9]{3}[0-9]{3}[0-9]{3}[0-9]{3}'
                 required
+                autoComplete='on'
+                value={contact.phone}
+                onChange={(e) => dispatch(updateContact(e))}
               />
             </div>
             <div className='mb-3'>
@@ -47,6 +71,9 @@ const ContactEditor: React.FC = () => {
                 name='email'
                 placeholder='johndoe@example.com'
                 required
+                autoComplete='on'
+                value={contact.email}
+                onChange={(e) => dispatch(updateContact(e))}
               />
             </div>
             <div className='mb-3'>
@@ -60,6 +87,9 @@ const ContactEditor: React.FC = () => {
                 name='photo'
                 placeholder='https://images.com/photos/123456/example.jpeg'
                 required
+                autoComplete='on'
+                value={contact.photo}
+                onChange={(e) => dispatch(updateContact(e))}
               />
             </div>
             <div className='mb-3'>
@@ -73,8 +103,25 @@ const ContactEditor: React.FC = () => {
               </div>
             </div>
             <div className='d-flex'>
-              <button className='btn btn-outline-dark me-3' type='submit'>
-                Save
+              <button
+                className='btn btn-outline-dark me-3'
+                type='submit'
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <span
+                      className='spinner-border spinner-border-sm'
+                      aria-hidden='true'
+                    ></span>
+                    <span className='visually-hidden' role='status'>
+                      Loading...
+                    </span>
+                    Save
+                  </>
+                ) : (
+                  'Save'
+                )}
               </button>
               <Link className='btn btn-outline-dark' to='/'>
                 Back to contacts
