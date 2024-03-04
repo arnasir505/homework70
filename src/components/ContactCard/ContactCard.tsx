@@ -1,4 +1,7 @@
 import React from 'react';
+import { useAppDispatch } from '../../app/hooks';
+import { openModal, updateModal } from '../../store/modalSlice/modalSlice';
+import './ContactCard.css';
 
 interface Props {
   id: string;
@@ -9,8 +12,12 @@ interface Props {
 }
 
 const ContactCard: React.FC<Props> = ({ id, name, phone, email, photo }) => {
+  const dispatch = useAppDispatch();
   return (
-    <div className='card mb-3'>
+    <div
+      className='card mb-3 cursor-pointer'
+      onClick={() => dispatch(openModal())}
+    >
       <div className='card-body p-2 d-flex align-items-center'>
         <div className='photo-wrap'>
           <img src={photo} alt='profile photo' className='photo' />

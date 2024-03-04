@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   clearForm,
@@ -11,6 +11,7 @@ import { addContact } from '../../store/contactSlice/contactThunks';
 
 const ContactEditor: React.FC = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const contact = useAppSelector(selectContact);
   const isLoading = useAppSelector(selectLoading);
 
@@ -18,6 +19,7 @@ const ContactEditor: React.FC = () => {
     e.preventDefault();
     await dispatch(addContact(contact));
     dispatch(clearForm());
+    navigate('/');
   };
 
   return (
