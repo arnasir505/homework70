@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAppDispatch } from '../../app/hooks';
-import { openModal, updateModal } from '../../store/modalSlice/modalSlice';
+import { openModal } from '../../store/modalSlice/modalSlice';
 import './ContactCard.css';
 
 interface Props {
@@ -16,7 +16,7 @@ const ContactCard: React.FC<Props> = ({ id, name, phone, email, photo }) => {
   return (
     <div
       className='card mb-3 cursor-pointer'
-      onClick={() => dispatch(openModal())}
+      onClick={() => dispatch(openModal({id, name, phone, email, photo}))}
     >
       <div className='card-body p-2 d-flex align-items-center'>
         <div className='photo-wrap'>
