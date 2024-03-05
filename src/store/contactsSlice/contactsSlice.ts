@@ -22,14 +22,14 @@ const contactsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchContacts.pending, (state) => {
-        state.error = false;
         state.loading = true;
+        state.error = false;
       })
       .addCase(
         fetchContacts.fulfilled,
         (state, { payload: contacts }: PayloadAction<ApiContacts>) => {
-          state.error = false;
           state.loading = false;
+          state.error = false;
           state.list = Object.keys(contacts).map((id) => ({
             id: id,
             ...contacts[id],
@@ -37,8 +37,8 @@ const contactsSlice = createSlice({
         }
       )
       .addCase(fetchContacts.rejected, (state) => {
-        state.error = true;
         state.loading = false;
+        state.error = true;
       });
   },
 });

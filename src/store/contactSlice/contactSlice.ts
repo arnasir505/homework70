@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { ApiContact } from '../../types';
 import React from 'react';
 import { RootState } from '../../app/store';
-import { addContact } from './contactThunks';
+import { addContact, fetchContactForm } from './contactThunks';
 
 interface ContactState {
   data: ApiContact;
@@ -44,8 +44,8 @@ const contactSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(addContact.pending, (state) => {
-        state.error = false;
         state.loading = true;
+        state.error = false;
       })
       .addCase(addContact.fulfilled, (state) => {
         state.loading = false;
@@ -54,6 +54,17 @@ const contactSlice = createSlice({
         state.loading = false;
         state.error = true;
       });
+    builder.addCase(fetchContactForm.pending, (state) => {
+      state.loading = true;
+      state.error = false;
+    }).addCase(fetchContactForm.fulfilled, (state, {payload: contact}: PayloadAction<ApiContact>) => {
+      state.loading = false;
+      state.error = false;
+      state.data = contact;
+    }).addCase(fetchContactForm.rejected, state => {
+      state.loading = false;
+      state.error = true;
+    })
   },
 });
 

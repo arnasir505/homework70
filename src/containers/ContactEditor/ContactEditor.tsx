@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useCallback, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   clearForm,
@@ -7,9 +7,16 @@ import {
   selectLoading,
   updateContact,
 } from '../../store/contactSlice/contactSlice';
-import { addContact } from '../../store/contactSlice/contactThunks';
+import {
+  addContact,
+  fetchContactForm,
+  updateContactForm,
+} from '../../store/contactSlice/contactThunks';
+import { closeModal } from '../../store/modalSlice/modalSlice';
 
 const ContactEditor: React.FC = () => {
+  const params = useParams();
+  console.log(params.id);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const contact = useAppSelector(selectContact);
@@ -17,16 +24,33 @@ const ContactEditor: React.FC = () => {
 
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await dispatch(addContact(contact));
+    if (params.id) {
+      await dispatch(updateContactForm(params.id));
+    } else {
+      await dispatch(addContact(contact));
+    }
     dispatch(clearForm());
+    dispatch(closeModal());
     navigate('/');
   };
+
+  const getContactForm = useCallback(async () => {
+    if (params.id) {
+      await dispatch(fetchContactForm(params.id));
+    }
+  }, [params.id, dispatch]);
+
+  useEffect(() => {
+    getContactForm();
+  }, [getContactForm]);
 
   return (
     <div className='container'>
       <div className='row'>
         <div className='col-lg-6'>
-          <h1 className='my-3'>Add new contact</h1>
+          <h1 className='my-3'>
+            {params.id ? 'Edit contact' : 'Add new contact'}
+          </h1>
           <form onSubmit={onFormSubmit}>
             <div className='mb-3'>
               <label htmlFor='name' className='form-label'>
