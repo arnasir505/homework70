@@ -3,24 +3,29 @@ import ContactCard from '../../components/ContactCard/ContactCard';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   selectContacts,
-  selectLoading,
+  selectContactsLoading,
 } from '../../store/contactsSlice/contactsSlice';
 import { fetchContacts } from '../../store/contactsSlice/contactsThunks';
 import Spinner from '../../components/Spinner/Spinner';
 import { Link } from 'react-router-dom';
 import CustomModal from '../../components/CustomModal/CustomModal';
+import { closeModal, selectModalShow } from '../../store/modalSlice/modalSlice';
 
 const Contacts: React.FC = () => {
-  const contacts = useAppSelector(selectContacts);
-  const isLoading = useAppSelector(selectLoading);
   const dispatch = useAppDispatch();
+  const contacts = useAppSelector(selectContacts);
+  const isLoading = useAppSelector(selectContactsLoading);
+  const isModalOpen = useAppSelector(selectModalShow);
 
   const getContacts = useCallback(async () => {
     await dispatch(fetchContacts());
   }, [dispatch]);
 
   useEffect(() => {
-    getContacts();
+    void getContacts();
+    if (isModalOpen) {
+      dispatch(closeModal());
+    }
   }, [getContacts]);
 
   let content = <Spinner />;
@@ -52,7 +57,7 @@ const Contacts: React.FC = () => {
 
   return (
     <div className='container pt-5'>
-      <CustomModal/>
+      <CustomModal />
       <div className='row'>
         <div className='col-md-8 col-lg-6'>{content}</div>
       </div>

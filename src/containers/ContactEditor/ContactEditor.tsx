@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   clearForm,
   selectContact,
-  selectLoading,
+  selectContactLoading,
   updateContact,
 } from '../../store/contactSlice/contactSlice';
 import {
@@ -16,11 +16,10 @@ import { closeModal } from '../../store/modalSlice/modalSlice';
 
 const ContactEditor: React.FC = () => {
   const params = useParams();
-  console.log(params.id);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const contact = useAppSelector(selectContact);
-  const isLoading = useAppSelector(selectLoading);
+  const isLoading = useAppSelector(selectContactLoading);
 
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,13 +34,19 @@ const ContactEditor: React.FC = () => {
   };
 
   const getContactForm = useCallback(async () => {
-    if (params.id) {
-      await dispatch(fetchContactForm(params.id));
+    try {
+      if (params.id) {
+        await dispatch(fetchContactForm(params.id)).unwrap();
+      } else {
+        dispatch(clearForm());
+      }
+    } catch (e) {
+      navigate('/404', { replace: true });
     }
   }, [params.id, dispatch]);
 
   useEffect(() => {
-    getContactForm();
+    void getContactForm();
   }, [getContactForm]);
 
   return (

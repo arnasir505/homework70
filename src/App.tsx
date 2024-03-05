@@ -1,9 +1,9 @@
 import { Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
-import ContactEditor from './containers/ContactEditor/ContactEditor';
 import Contacts from './containers/Contacts/Contacts';
-import './App.css';
+import ContactEditor from './containers/ContactEditor/ContactEditor';
 import NotFound from './containers/NotFound/NotFound';
+import './App.css';
 
 function App() {
   return (

@@ -39,10 +39,11 @@ const contactsSlice = createSlice({
       .addCase(fetchContacts.rejected, (state) => {
         state.loading = false;
         state.error = true;
+        state.list = [];
       });
   },
 });
 
 export const contactsReducer = contactsSlice.reducer;
 export const selectContacts = (state: RootState) => state.contacts.list;
-export const selectLoading = (state: RootState) => state.contacts.loading;
+export const selectContactsLoading = (state: RootState) => state.contacts.loading;

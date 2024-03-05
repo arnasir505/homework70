@@ -54,21 +54,27 @@ const contactSlice = createSlice({
         state.loading = false;
         state.error = true;
       });
-    builder.addCase(fetchContactForm.pending, (state) => {
-      state.loading = true;
-      state.error = false;
-    }).addCase(fetchContactForm.fulfilled, (state, {payload: contact}: PayloadAction<ApiContact>) => {
-      state.loading = false;
-      state.error = false;
-      state.data = contact;
-    }).addCase(fetchContactForm.rejected, state => {
-      state.loading = false;
-      state.error = true;
-    })
+    builder
+      .addCase(fetchContactForm.pending, (state) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(
+        fetchContactForm.fulfilled,
+        (state, { payload: contact }: PayloadAction<ApiContact>) => {
+          state.loading = false;
+          state.error = false;
+          state.data = contact;
+        }
+      )
+      .addCase(fetchContactForm.rejected, (state) => {
+        state.loading = false;
+        state.error = true;
+      });
   },
 });
 
 export const contactReducer = contactSlice.reducer;
 export const { updateContact, clearForm } = contactSlice.actions;
 export const selectContact = (state: RootState) => state.contact.data;
-export const selectLoading = (state: RootState) => state.contact.loading;
+export const selectContactLoading = (state: RootState) => state.contact.loading;

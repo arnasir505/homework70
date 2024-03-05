@@ -5,32 +5,46 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   closeModal,
   selectModalContact,
+  selectModalLoading,
   selectModalShow,
 } from '../../store/modalSlice/modalSlice';
+import { deleteContact } from '../../store/modalSlice/modalThunks';
+import { fetchContacts } from '../../store/contactsSlice/contactsThunks';
 
 const CustomModal: React.FC = () => {
   const dispatch = useAppDispatch();
   const show = useAppSelector(selectModalShow);
   const contact = useAppSelector(selectModalContact);
+  const isLoading = useAppSelector(selectModalLoading);
 
-  const normalize = (phone: string) => {
+  const normalizePhone = (phone: string) => {
     phone = phone.replace(/[^\d]/g, '');
     if (phone.length == 12) {
       return phone.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, '+$1 $2-$3-$4');
     }
     return null;
   };
+
+  const handleDelete = async (id: string) => {
+    const userConfirmed = confirm('Do you really want to delete this contact?');
+    if (userConfirmed) {
+      await dispatch(deleteContact(id));
+      dispatch(closeModal());
+      await dispatch(fetchContacts());
+    }
+  };
+
   return (
     <Modal show={show} onHide={() => dispatch(closeModal())}>
       <Modal.Header closeButton className='bg-info-subtle' />
       <Modal.Body>
         <div className='row'>
-          <div className='col-4'>
-            <div className='photo-wrap'>
+          <div className='col-12 col-sm-4'>
+            <div className='photo-wrap mx-auto mb-3 mb-sm-0'>
               <img src={contact.photo} alt='profile photo' className='photo' />
             </div>
           </div>
-          <div className='col-8'>
+          <div className='col-12 col-sm-8'>
             <h2>{contact.name}</h2>
             <Link to={'/'}>
               <svg
@@ -46,7 +60,7 @@ const CustomModal: React.FC = () => {
                   d='M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z'
                 />
               </svg>
-              {normalize(contact.phone)}
+              {normalizePhone(contact.phone)}
             </Link>
             <br />
             <Link to={'/'}>
@@ -67,10 +81,34 @@ const CustomModal: React.FC = () => {
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Link to={'/contacts/edit/' + contact.id} className='btn btn-outline-dark'>
+        <Link
+          to={'/contacts/edit/' + contact.id}
+          className={`btn btn-outline-dark ${isLoading ? 'disabled' : ''}`}
+        >
           Edit
         </Link>
-        <button className='btn btn-outline-dark'>Delete</button>
+        <button
+          className='btn btn-outline-dark'
+          disabled={isLoading}
+          onClick={() => {
+            handleDelete(contact.id);
+          }}
+        >
+          {isLoading ? (
+            <>
+              <span
+                className='spinner-border spinner-border-sm'
+                aria-hidden='true'
+              ></span>
+              <span className='visually-hidden' role='status'>
+                Loading...
+              </span>
+              Delete
+            </>
+          ) : (
+            'Delete'
+          )}
+        </button>
       </Modal.Footer>
     </Modal>
   );
